@@ -293,6 +293,7 @@ public class UserEmailServiceImpl implements UserEmailService {
     @Override // check the code which is entered by user
     public Result checkEmailCode(String email, String code) {
         try {
+            System.out.println(email+" - "+code);
             UserEmail userEmail = userEmailRepository.findUserEmailByEmail(email);
 
             if (userEmail.getEmailCode().equals(code)) {

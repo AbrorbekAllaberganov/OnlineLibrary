@@ -29,12 +29,12 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.PetHack.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.example.LibraryService.controller"))
                 .paths(regex("/.*"))
                 .build()
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(Collections.singletonList(apiKey()))
-                .apiInfo(new ApiInfo("PetHack","PetHack Project","1.0","no service","+998974200730","no license","no url"))
+                .apiInfo(new ApiInfo("LibraryService","Online Library","1.0","no service","+998974200730","no license","no url"))
                 ;
 
     }
