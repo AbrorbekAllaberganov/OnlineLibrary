@@ -5,35 +5,34 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Attachment {
+public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    String link;
-
+    @Column(nullable = false)
     String name;
 
-    String hashId;
+    @Column(nullable = false)
+    String description;
 
-    String uploadPath;
+    @OneToOne
+    User author;
 
-    String contentType;
+    @OneToOne
+    Attachment file;
 
-    String extension;
-
-    Long fileSize;
-
+    @CreationTimestamp
+    Date createdAt;
 
 }
