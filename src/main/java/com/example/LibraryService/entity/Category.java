@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -20,4 +22,7 @@ public class Category {
 
     @Column(unique = true, nullable = false)
     String name;
+
+    @CreationTimestamp
+    Date createdAt;
 }

@@ -1,6 +1,7 @@
 package com.example.LibraryService.service.impl;
 
 import com.example.LibraryService.entity.Parent;
+import com.example.LibraryService.entity.User;
 import com.example.LibraryService.entity.UserEmail;
 import com.example.LibraryService.exceptions.BadRequest;
 import com.example.LibraryService.payload.RegisterPayload;
@@ -8,6 +9,7 @@ import com.example.LibraryService.payload.Result;
 import com.example.LibraryService.repository.ParentRepository;
 import com.example.LibraryService.repository.RoleRepository;
 import com.example.LibraryService.repository.UserEmailRepository;
+import com.example.LibraryService.repository.UserRepository;
 import com.example.LibraryService.service.UserEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +31,7 @@ public class UserEmailServiceImpl implements UserEmailService {
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final TemplateEngine templateEngine;
+    private final UserRepository userRepository;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
@@ -51,6 +53,9 @@ public class UserEmailServiceImpl implements UserEmailService {
             userEmail.setPassword(registerPayload.getPassword());
             userEmail.setEmail(registerPayload.getEmail());
             userEmail.setEmailCode(generateEmailCode());
+            userEmail.setBio(registerPayload.getBio());
+            userEmail.setFirstName(registerPayload.getFirstName());
+            userEmail.setLastName(registerPayload.getLastName());
 
             // save user_email to user_email table
             userEmailRepository.save(userEmail);
@@ -307,10 +312,18 @@ public class UserEmailServiceImpl implements UserEmailService {
 
                 parentRepository.save(parent); // if code is correct, the data of user is relocated to parent table
 
+                User user=new User();
+                user.setFirstName(userEmail.getFirstName());
+                user.setLastName(userEmail.getLastName());
+                user.setBio(userEmail.getBio());
+                user.setParent(parent);
+
+                userRepository.save(user);
+
                 if (userEmailRepository.existsByEmail(fromEmail))
                     userEmailRepository.deleteUserEmailByEmail(email); // the user_email object is deleted after saving user data
 
-                return Result.success(parent);
+                return Result.success(user);
             }
 
             return Result.message("code is incorrect, please try again", true);

@@ -28,6 +28,9 @@ public class UserEmail {
 
     String userName;
     String email;
+    String firstName;
+    String lastName;
+    String bio;
     String password;
     String emailCode;
 

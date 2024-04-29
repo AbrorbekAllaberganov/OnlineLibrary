@@ -29,6 +29,9 @@ public class Book {
     @OneToOne
     User author;
 
+    @ManyToOne
+    Category category;
+
     @OneToOne
     Attachment file;
 

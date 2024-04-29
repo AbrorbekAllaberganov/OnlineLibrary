@@ -13,11 +13,8 @@ import java.io.IOException;
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
-    private final Logger logger = LoggerFactory.getLogger(JwtAuthEntryPoint.class);
-
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        logger.error("error message - {}",e.getMessage());
-        httpServletResponse.sendError(500,"You are not authorization");
+        httpServletResponse.sendError(405,"You are not authorization");
     }
 }
