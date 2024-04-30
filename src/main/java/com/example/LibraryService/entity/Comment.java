@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,11 +23,11 @@ public class Comment {
 
     String text;
 
-    @ManyToOne
-    User user;
+    @ManyToMany
+    List<User> user;
 
-    @ManyToOne
-    Book book;
+    @ManyToMany
+    List<Book> book;
 
     @CreationTimestamp
     Date createdAt;

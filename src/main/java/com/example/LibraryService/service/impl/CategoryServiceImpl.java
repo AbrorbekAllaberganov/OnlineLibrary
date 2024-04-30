@@ -1,5 +1,6 @@
 package com.example.LibraryService.service.impl;
 
+import com.example.LibraryService.entity.Book;
 import com.example.LibraryService.entity.Category;
 import com.example.LibraryService.exceptions.ResourceNotFound;
 import com.example.LibraryService.payload.Result;
@@ -9,6 +10,8 @@ import com.example.LibraryService.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -33,15 +36,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Result deleteCategory(Long categoryId) {
         try {
-            if (bookRepository.getBookListByCategoryId(categoryId).size()==0){
-                categoryRepository.deleteById(categoryId);
-                return Result.success("Category has been deleted");
-            }else {
-                return Result.message("The category has some books, so you cannot delete the category", false);
-            }
-        }catch (Exception e){
+            List<Book> bookList = bookRepository.getBookListByCategoryId(categoryId);
+
+            bookList.forEach(book -> {
+                List<Category> categories=book.getCategories();
+                categories.removeIf(category1 -> category1.getId().equals(categoryId));
+                book.setCategories(categories);
+                bookRepository.save(book);
+            });
+
+            categoryRepository.deleteById(categoryId);
+
+            return Result.success("Category has been deleted");
+        } catch (
+                Exception e) {
             return Result.exception(e);
         }
+
     }
 
     @Override
@@ -64,9 +75,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFound("user", "id", id)
-        );
+    public Result getCategoryById(long id) {
+        try {
+            Category category = categoryRepository.findById(id).orElseThrow(
+                    () -> new ResourceNotFound("category", "id", id)
+            );
+            return Result.success(category);
+        } catch (Exception e) {
+            return Result.exception(e);
+        }
+
     }
 }

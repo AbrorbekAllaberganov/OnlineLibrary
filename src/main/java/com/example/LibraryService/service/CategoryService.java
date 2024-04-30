@@ -10,6 +10,5 @@ public interface CategoryService {
     Result updateCategory(Long categoryId, String text);
     Result getCategoryList();
 
-    Category findCategoryById(Long id);
-
+    Result getCategoryById(long id);
 }

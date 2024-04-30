@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService{
     public Result loginUser(LoginPayload loginPayload) {
         Parent parent = parentRepository.findByUserName(loginPayload.getUserName());
         if (parent==null){
-            return Result.exception(new UnAuthorized("Неверный логин или пароль"));
+            return Result.exception(new UnAuthorized("username or password is incorrect"));
         }
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginPayload.getUserName(), loginPayload.getPassword()));

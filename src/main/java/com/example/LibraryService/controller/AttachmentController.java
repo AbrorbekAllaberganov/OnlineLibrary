@@ -34,11 +34,6 @@ public class AttachmentController {
                 .body(new FileUrlResource(String.format("%s/%s.%s", attachment.getUploadPath(), attachment.getHashId(), attachment.getExtension())));
     }
 
-    @DeleteMapping("/delete/{hashId}")
-    public ResponseEntity<?> delete(@PathVariable String hashId) {
-        Result result = attachmentService.deleteFile(hashId);
-        return ResponseEntity.status(result.isStatus() ? 200 : 409).body(result);
-    }
 
     @GetMapping("/{hashId}")
     public ResponseEntity<?> preview(@PathVariable String hashId) throws MalformedURLException {

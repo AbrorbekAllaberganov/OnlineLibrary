@@ -7,7 +7,5 @@ import java.nio.channels.MulticastChannel;
 
 public interface AttachmentService {
     String saveFile(MultipartFile multipartFile);
-    Result deleteFile(String hashId);
-
 
 }

@@ -77,11 +77,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
     }
 
-    @Override
-    public Result deleteFile(String hashId) {
-        return null;
-    }
-
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }

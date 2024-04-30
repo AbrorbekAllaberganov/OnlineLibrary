@@ -9,6 +9,10 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,Long> {
-    @Query(nativeQuery = true,value = "select * from comment where book_id=?1")
+    @Query(nativeQuery = true,value = """
+            select * from comment
+            inner join comment_book on comment_book.comment_id=comment.id
+            where comment_book.book_id=?1
+            """)
     List<Comment> getCommentListByBookId(Long bookId);
 }

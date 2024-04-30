@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,17 +21,18 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String name;
 
     @Column(nullable = false)
     String description;
 
-    @OneToOne
+    @ManyToOne
     User author;
 
-    @ManyToOne
-    Category category;
+    @ManyToMany
+    @Column(nullable = false)
+    List<Category> categories;
 
     @OneToOne
     Attachment file;

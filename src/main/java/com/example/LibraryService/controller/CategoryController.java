@@ -37,4 +37,10 @@ public class CategoryController {
         return ResponseEntity.status(result.isStatus()?200:409).body(result);
     }
 
+    @GetMapping("/user/controller/{id}")
+    public ResponseEntity<Result> getCategoryById(@PathVariable long id) {
+        Result result=categoryService.getCategoryById(id);
+        return ResponseEntity.status(result.isStatus()?200:409).body(result);
+    }
+
 }

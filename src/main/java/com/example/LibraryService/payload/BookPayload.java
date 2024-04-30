@@ -4,6 +4,8 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookPayload {
@@ -11,6 +13,6 @@ public class BookPayload {
     String description;
     Long userId;
     String hashId;
-    Long categoryId;
+    List<Long> categoryIds;
     String text;
 }

@@ -11,6 +11,8 @@ import com.example.LibraryService.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
@@ -23,8 +25,16 @@ public class CommentServiceImpl implements CommentService {
         try {
             Comment comment=new Comment();
             comment.setText(commentPayload.getText());
-            comment.setBook(bookService.findById(commentPayload.getBookId()));
-            comment.setUser(userService.findUserById(commentPayload.getUserId()));
+            comment.setBook(
+                    commentPayload.getBooksId().stream()
+                            .map(bookService::findById)
+                            .collect(Collectors.toList())
+            );
+            comment.setUser(
+                    commentPayload.getUsersId().stream()
+                            .map(userService::findUserById)
+                            .collect(Collectors.toList())
+            );
 
             commentRepository.save(comment);
             return Result.success(comment);
@@ -40,8 +50,17 @@ public class CommentServiceImpl implements CommentService {
                     ()->new ResourceNotFound("comment","id", commentId)
             );
             comment.setText(commentPayload.getText());
-            comment.setBook(bookService.findById(commentPayload.getBookId()));
-            comment.setUser(userService.findUserById(commentPayload.getUserId()));
+
+            comment.setBook(
+                    commentPayload.getBooksId().stream()
+                            .map(bookService::findById)
+                            .collect(Collectors.toList())
+            );
+            comment.setUser(
+                    commentPayload.getUsersId().stream()
+                            .map(userService::findUserById)
+                            .collect(Collectors.toList())
+            );
 
             commentRepository.save(comment);
             return Result.success(comment);

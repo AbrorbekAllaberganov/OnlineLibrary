@@ -1,20 +1,23 @@
 package com.example.LibraryService.service.impl;
 
 import com.example.LibraryService.entity.Book;
+import com.example.LibraryService.entity.Comment;
 import com.example.LibraryService.exceptions.ResourceNotFound;
 import com.example.LibraryService.payload.BookPayload;
 import com.example.LibraryService.payload.Result;
 import com.example.LibraryService.repository.AttachmentRepository;
 import com.example.LibraryService.repository.BookRepository;
+import com.example.LibraryService.repository.CategoryRepository;
+import com.example.LibraryService.repository.CommentRepository;
 import com.example.LibraryService.service.BookService;
-import com.example.LibraryService.service.CategoryService;
 import com.example.LibraryService.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +25,9 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AttachmentRepository attachmentRepository;
     private final UserService userService;
-    private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
     private final PdfService pdfService;
-
-
-    @Value("${upload}")
-    String upload;
+    private final CommentRepository commentRepository;
 
     @Override
     public Result saveBook(BookPayload bookPayload) {
@@ -37,7 +37,14 @@ public class BookServiceImpl implements BookService {
             book.setDescription(bookPayload.getDescription());
             book.setAuthor(userService.findUserById(bookPayload.getUserId()));
             book.setFile(attachmentRepository.findByHashId(bookPayload.getHashId()));
-            book.setCategory(categoryService.findCategoryById(bookPayload.getCategoryId()));
+            if (bookPayload.getCategoryIds()!=null)
+                book.setCategories(
+                    bookPayload.getCategoryIds().stream()
+                            .map(id->categoryRepository.findById(id).orElseThrow(
+                                    () -> new ResourceNotFound("category", "id", id)
+                            ))
+                            .collect(Collectors.toList())
+                );
 
             bookRepository.save(book);
             return Result.success(book);
@@ -56,8 +63,14 @@ public class BookServiceImpl implements BookService {
             book.setDescription(bookPayload.getDescription());
             book.setAuthor(userService.findUserById(bookPayload.getUserId()));
             book.setFile(attachmentRepository.findByHashId(bookPayload.getHashId()));
-            book.setCategory(categoryService.findCategoryById(bookPayload.getCategoryId()));
-
+            if (bookPayload.getCategoryIds()!=null)
+                book.setCategories(
+                    bookPayload.getCategoryIds().stream()
+                            .map(id->categoryRepository.findById(id).orElseThrow(
+                                    () -> new ResourceNotFound("category", "id", id)
+                            ))
+                            .collect(Collectors.toList())
+                );
             bookRepository.save(book);
             return Result.success(book);
         } catch (Exception e) {
@@ -68,6 +81,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public Result deleteBook(Long bookId) {
         try {
+            List<Comment> commentList=commentRepository.getCommentListByBookId(bookId);
+            commentList.forEach(comment -> commentRepository.deleteById(comment.getId()));
             bookRepository.deleteById(bookId);
             return Result.message("Book has been deleted", true);
         } catch (Exception e) {
@@ -103,9 +118,8 @@ public class BookServiceImpl implements BookService {
             String hashId=pdfService.uploadFile(bookPayload.getName(), bookPayload.getText());
 
             bookPayload.setHashId(hashId);
-            saveBook(bookPayload);
 
-            return Result.success(bookPayload);
+            return saveBook(bookPayload);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -50,4 +50,9 @@ public class BookController {
         return ResponseEntity.status(result.isStatus()?200:409).body(result);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Result> deleteBook(@PathVariable Long id){
+        Result result=bookService.deleteBook(id);
+        return ResponseEntity.status(result.isStatus()?200:409).body(result);
+    }
 }
